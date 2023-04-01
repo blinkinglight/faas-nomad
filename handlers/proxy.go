@@ -14,11 +14,12 @@ func MakeProxy(n string) http.HandlerFunc {
 		// w.WriteHeader(http.StatusNotFound)
 
 		realFunction := fmt.Sprintf("http://%s-function.service.consul", r.URL.Path[10:])
-
+		log.Printf("%s", realFunction)
 		req, _ := http.NewRequest("GET", realFunction, nil)
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
+			log.Printf("%v", err)
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
