@@ -22,12 +22,13 @@ func getFunctions(
 			if err != nil {
 				return functions, err
 			}
-			log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
-			image, ok := allocation.Job.TaskGroups[0].Tasks[0].Config["image"].(string)
-			if ok {
+			// log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
+			image := allocation.Job.TaskGroups[0].Tasks[0].Config["image"]
+
+			if image != nil {
 				functions = append(functions, requests.Function{
 					Name:            allocation.Job.TaskGroups[0].Tasks[0].Name,
-					Image:           image,
+					Image:           image.(string),
 					Replicas:        uint64(*allocation.Job.TaskGroups[0].Count),
 					InvocationCount: 0,
 				})
