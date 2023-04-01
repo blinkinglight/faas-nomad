@@ -34,7 +34,7 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 
 		resourcesCPU := 500
 		resourcesMemory := 256
-		resoucesCount := 1
+		resourcesCount := 1
 
 		config := map[string]interface{}{
 			"image":        request.Image,
@@ -54,7 +54,7 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 			TaskGroups: []*api.TaskGroup{
 				&api.TaskGroup{
 					Name:  &jobName,
-					Count: &resourceCount,
+					Count: &resourcesCount,
 					Tasks: []*api.Task{
 						&api.Task{
 							Name:   request.Service,
