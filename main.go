@@ -11,13 +11,17 @@ import (
 )
 
 func main() {
-	region := os.Getenv("NOMAD_REGION")
+	// region := os.Getenv("NOMAD_REGION")
 	address := os.Getenv("NOMAD_ADDR")
 
-	c := api.DefaultConfig()
-	c.SecretID = os.Getenv("NOMAD_TOKEN")
+	// c := api.DefaultConfig()
+	// c.SecretID = os.Getenv("NOMAD_TOKEN")
+	c := &api.Config{
+		Address:  address,
+		SecretID: os.Getenv("NOMAD_TOKEN"),
+	}
 
-	client, err := api.NewClient(c.ClientConfig(region, address, false))
+	client, err := api.NewClient(c)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,6 +35,7 @@ func main() {
 		ReplicaUpdater: handlers.MakeNull(),
 	}
 	config := &types.FaaSConfig{}
-
+	// port := 9999
+	// config.TCPPort = &port
 	bootstrap.Serve(handlers, config)
 }
