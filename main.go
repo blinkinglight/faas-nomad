@@ -4,10 +4,10 @@ import (
 	"log"
 	"os"
 
-	bootstrap "github.com/alexellis/faas-provider"
-	"github.com/alexellis/faas-provider/types"
 	"github.com/blinkinglight/faas-nomad/handlers"
 	"github.com/hashicorp/nomad/api"
+	bootstrap "github.com/openfaas/faas-provider"
+	"github.com/openfaas/faas-provider/types"
 )
 
 func main() {
@@ -27,15 +27,27 @@ func main() {
 	}
 
 	handlers := &types.FaaSHandlers{
-		FunctionReader: handlers.MakeReader(client.Allocations()),
-		DeployHandler:  handlers.MakeNull(),
-		DeleteHandler:  handlers.MakeNull(),
-		ReplicaReader:  handlers.MakeNull(),
-		FunctionProxy:  handlers.MakeNull(),
-		ReplicaUpdater: handlers.MakeNull(),
+		FunctionLister: handlers.MakeReader(client.Allocations()),
+		DeployFunction: handlers.MakeNull("DeployFunction"),
+		DeleteFunction: handlers.MakeNull("DeleteFunction"),
+		FunctionProxy:  handlers.MakeNull("FunctionProxy"),
+		ListNamespaces: handlers.MakeNull("ListNamespaces"),
+		UpdateFunction: handlers.MakeNull("UpdateFunction"),
+		FunctionStatus: handlers.MakeReader(client.Allocations()),
+		ScaleFunction:  handlers.MakeNull("ScaleFunction"),
+		Secrets:        handlers.MakeNull("Secrets"),
+		Logs:           handlers.MakeNull("Logs"),
+		Health:         handlers.MakeNull("Health"),
+		Info:           handlers.MakeNull("Info"),
 	}
 	config := &types.FaaSConfig{}
-	// port := 9999
-	// config.TCPPort = &port
+	port := 9999
+	config.TCPPort = &port
+	// http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 	w.Write([]byte("Hello from Nomad!"))
+	// }))
+	// http.ListenAndServe(":9999", nil)
+	// bootstrap.Serve(handlers, config)
+	log.Printf("Starting...")
 	bootstrap.Serve(handlers, config)
 }

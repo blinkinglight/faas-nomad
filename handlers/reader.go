@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/alexellis/faas/gateway/requests"
 	"github.com/blinkinglight/faas-nomad/nomad"
@@ -22,6 +23,10 @@ func getFunctions(
 			if err != nil {
 				return functions, err
 			}
+			name := *allocation.Job.Name
+			if !strings.HasPrefix(name, "OpenFaas-") {
+				continue
+			}
 			// log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
 			image := allocation.Job.TaskGroups[0].Tasks[0].Config["image"]
 
@@ -32,8 +37,8 @@ func getFunctions(
 					Replicas:        uint64(*allocation.Job.TaskGroups[0].Count),
 					InvocationCount: 0,
 				})
-			} else {
-				log.Printf("Failed to get image for function %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
+				// } else {
+				// log.Printf("Failed to get image for function %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
 			}
 		}
 
@@ -55,9 +60,9 @@ func MakeReader(client nomad.Allocations) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Not sure if prefix is the right option
 		options := api.QueryOptions{}
-		options.Prefix = "faas_function"
+		// options.Prefix = "faas_function"
 
-		allocations, _, err := client.List(nil)
+		allocations, _, err := client.List(&options)
 		if err != nil {
 			writeError(w, err)
 			return
@@ -71,6 +76,11 @@ func MakeReader(client nomad.Allocations) http.HandlerFunc {
 
 		functionBytes, _ := json.Marshal(functions)
 		w.Header().Set("Content-Type", "application/json")
+		if len(functions) == 0 {
+			w.WriteHeader(404)
+			w.Write(functionBytes)
+			return
+		}
 		w.WriteHeader(200)
 		w.Write(functionBytes)
 	}

@@ -1,7 +1,13 @@
 package handlers
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
-func MakeNull() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {}
+func MakeNull(n string) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %v", n, r.URL.String())
+	}
 }
