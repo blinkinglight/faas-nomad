@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/alexellis/faas/gateway/requests"
 	"github.com/blinkinglight/faas-nomad/nomad"
@@ -66,9 +68,17 @@ func MakeDeploy(n string, client nomad.Job) http.HandlerFunc {
 
 							Services: []*api.Service{
 								&api.Service{
-									Name:        jobName,
-									PortLabel:   "8080",
-									Tags:        []string{"faas_function", "faas"},
+									Name:      fmt.Sprintf("%s-%s", request.Service, "function"),
+									PortLabel: "8080",
+									Tags: []string{
+										"faas_function", "faas",
+										"traefik.enable=true",
+										"traefik.http.routers.faas-" + request.Service + "-http.rule=Host(`" + request.Service + "-function." + os.Getenv("DOMAIN_ROOT") + "`)",
+										"traefik.http.routers.faas-" + request.Service + "-http.entrypoints=web",
+										"traefik.http.routers.faas-" + request.Service + "-https.rule=Host(`" + request.Service + "-function." + os.Getenv("DOMAIN_ROOT") + "`)",
+										"traefik.http.routers.faas-" + request.Service + "-https.entrypoints=websecure",
+										"traefik.http.routers.faas-" + request.Service + "-https.tls.certresolver=le",
+									},
 									Provider:    "consul",
 									AddressMode: "driver",
 								},
