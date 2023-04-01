@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/alexellis/faas/gateway/requests"
@@ -22,6 +23,9 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
+
+		log.Printf("%+v", request)
+		log.Printf("%s", body)
 
 		// Create job /v1/jobs
 	}
