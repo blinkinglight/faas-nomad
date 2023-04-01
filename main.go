@@ -27,13 +27,13 @@ func main() {
 	}
 
 	handlers := &types.FaaSHandlers{
-		FunctionLister: handlers.MakeReader(client.Allocations()),
-		DeployFunction: handlers.MakeDeploy(client.Jobs()),
+		FunctionLister: handlers.MakeReader("FunctionLister", client.Allocations()),
+		DeployFunction: handlers.MakeDeploy("DeployFunction", client.Jobs()),
 		DeleteFunction: handlers.MakeNull("DeleteFunction"),
-		FunctionProxy:  handlers.MakeNull("FunctionProxy"),
+		FunctionProxy:  handlers.MakeProxy("FunctionProxy"),
 		ListNamespaces: handlers.MakeNull("ListNamespaces"),
-		UpdateFunction: handlers.MakeReader(client.Allocations()),
-		FunctionStatus: handlers.MakeReader(client.Allocations()),
+		UpdateFunction: handlers.MakeUpdate("UpdateFunction", client.Jobs(), client),
+		FunctionStatus: handlers.MakeReader("FunctionStatus", client.Allocations()),
 		ScaleFunction:  handlers.MakeNull("ScaleFunction"),
 		Secrets:        handlers.MakeNull("Secrets"),
 		Logs:           handlers.MakeNull("Logs"),

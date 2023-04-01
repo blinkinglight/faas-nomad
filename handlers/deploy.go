@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/alexellis/faas/gateway/requests"
@@ -12,8 +13,9 @@ import (
 )
 
 // MakeDeploy creates a handler for deploying functions
-func MakeDeploy(client nomad.Job) http.HandlerFunc {
+func MakeDeploy(n string, client nomad.Job) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %v", n, r.URL.Path)
 		defer r.Body.Close()
 
 		body, _ := ioutil.ReadAll(r.Body)
@@ -50,6 +52,7 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 		}
 
 		job := &api.Job{
+			ID:   &jobName,
 			Name: &jobName,
 			TaskGroups: []*api.TaskGroup{
 				&api.TaskGroup{
@@ -80,6 +83,7 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 				},
 			},
 		}
-		client.Register(job, nil)
+		_, _, err = client.Register(job, nil)
+		log.Printf("%v", err)
 	}
 }

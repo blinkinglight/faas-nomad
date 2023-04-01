@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -11,7 +12,7 @@ import (
 	"github.com/hashicorp/nomad/api"
 )
 
-func getFunctions(
+func getFunctions(service string,
 	client nomad.Allocations,
 	allocs []*api.AllocationListStub) ([]requests.Function, error) {
 
@@ -24,10 +25,10 @@ func getFunctions(
 				return functions, err
 			}
 			name := *allocation.Job.Name
-			if !strings.HasPrefix(name, "OpenFaaS-") {
+			if !strings.HasPrefix(name, "OpenFaaS-"+service) {
 				continue
 			}
-			// log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
+
 			image := allocation.Job.TaskGroups[0].Tasks[0].Config["image"]
 
 			if image != nil {
@@ -37,8 +38,6 @@ func getFunctions(
 					Replicas:        uint64(*allocation.Job.TaskGroups[0].Count),
 					InvocationCount: 0,
 				})
-				// } else {
-				// log.Printf("Failed to get image for function %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
 			}
 		}
 
@@ -48,29 +47,43 @@ func getFunctions(
 
 }
 
-func writeError(w http.ResponseWriter, err error) {
+func writeError(s string, w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusInternalServerError)
 	w.Write([]byte(err.Error()))
-	log.Println(err)
+	log.Println(s + " " + err.Error())
 	return
 }
 
 // MakeReader implements the OpenFaaS reader handler
-func MakeReader(client nomad.Allocations) http.HandlerFunc {
+func MakeReader(n string, client nomad.Allocations) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %v", n, r.URL.Path)
+		defer r.Body.Close()
+
+		body, _ := ioutil.ReadAll(r.Body)
+
+		request := requests.Function{}
+		err := json.Unmarshal(body, &request)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		log.Printf("%+v", request)
+
 		// Not sure if prefix is the right option
 		options := api.QueryOptions{}
 		// options.Prefix = "faas_function"
 
 		allocations, _, err := client.List(&options)
 		if err != nil {
-			writeError(w, err)
+			writeError("alloc 1", w, err)
 			return
 		}
 
-		functions, err := getFunctions(client, allocations)
+		functions, err := getFunctions(request.Name, client, allocations)
 		if err != nil {
-			writeError(w, err)
+			writeError("get functions", w, err)
 			return
 		}
 
