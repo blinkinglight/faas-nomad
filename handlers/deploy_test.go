@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/nicholasjackson/faas-nomad/nomad"
+	"github.com/blinkinglight/faas-nomad/nomad"
 	"github.com/stretchr/testify/assert"
 )
 

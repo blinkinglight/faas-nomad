@@ -6,8 +6,8 @@ import (
 
 	bootstrap "github.com/alexellis/faas-provider"
 	"github.com/alexellis/faas-provider/types"
+	"github.com/blinkinglight/faas-nomad/handlers"
 	"github.com/hashicorp/nomad/api"
-	"github.com/nicholasjackson/faas-nomad/handlers"
 )
 
 func main() {

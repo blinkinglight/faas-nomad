@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/alexellis/faas/gateway/requests"
-	"github.com/nicholasjackson/faas-nomad/nomad"
+	"github.com/blinkinglight/faas-nomad/nomad"
 )
 
 // MakeDeploy creates a handler for deploying functions
