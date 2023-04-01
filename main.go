@@ -34,7 +34,7 @@ func main() {
 		ListNamespaces: handlers.MakeNull("ListNamespaces"),
 		UpdateFunction: handlers.MakeUpdate("UpdateFunction", client.Jobs(), client),
 		FunctionStatus: handlers.MakeReader("FunctionStatus", client.Allocations()),
-		ScaleFunction:  handlers.MakeNull("ScaleFunction"),
+		ScaleFunction:  handlers.MakeScale("ScaleFunction", client.Jobs(), client),
 		Secrets:        handlers.MakeNull("Secrets"),
 		Logs:           handlers.MakeNull("Logs"),
 		Health:         handlers.MakeNull("Health"),
