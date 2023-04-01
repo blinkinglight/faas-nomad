@@ -22,16 +22,17 @@ func getFunctions(
 			if err != nil {
 				return functions, err
 			}
-
+			log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
 			image, ok := allocation.Job.TaskGroups[0].Tasks[0].Config["image"].(string)
 			if ok {
-
 				functions = append(functions, requests.Function{
 					Name:            allocation.Job.TaskGroups[0].Tasks[0].Name,
 					Image:           image,
 					Replicas:        uint64(*allocation.Job.TaskGroups[0].Count),
 					InvocationCount: 0,
 				})
+			} else {
+				log.Printf("Failed to get image for function %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)
 			}
 		}
 
