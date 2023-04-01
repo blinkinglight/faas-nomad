@@ -1,11 +1,21 @@
-FROM alpine
+FROM golang:1.18-alpine as compiler
 
-RUN adduser -h /home/faasnomad -D faasnomad faasnomad
-#RUN usermod -aG docker cnitch
+WORKDIR /app
 
-COPY ./faas-nomad /home/faasnomad/
-RUN chmod +x /home/faasnomad/faas-nomad
+COPY go.mod ./
+COPY go.sum ./
+COPY handlers ./handlers
+COPY nomad ./nomad
+RUN go mod download
 
-USER faasnomad
+COPY *.go ./
 
-ENTRYPOINT ["/home/faasnomad/faas-nomad"]
+RUN CGO_ENABLED=0 go build -o /service
+
+
+FROM scratch
+WORKDIR /
+COPY --from=compiler /service /
+
+ENTRYPOINT ["/service" ]
+

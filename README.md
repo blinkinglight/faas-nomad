@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/blinkinglight/faas-nomad.svg?style=svg)](https://circleci.com/gh/blinkinglight/faas-nomad)
+Cloned from  https://github.com/nicholasjackson/faas-nomad
 
 # faas-nomad
 Nomad plugin for [OpenFaas](https://github.com/alexellis/faas) 
