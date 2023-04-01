@@ -24,7 +24,7 @@ func getFunctions(
 				return functions, err
 			}
 			name := *allocation.Job.Name
-			if !strings.HasPrefix(name, "OpenFaas-") {
+			if !strings.HasPrefix(name, "OpenFaaS-") {
 				continue
 			}
 			// log.Printf("Debug %+v", allocation.Job.TaskGroups[0].Tasks[0].Config)

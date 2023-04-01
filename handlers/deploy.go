@@ -30,9 +30,11 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 
 		// Create job /v1/jobs
 
-		jobName := "OpenFaas-" + request.Service
+		jobName := "OpenFaaS-" + request.Service
+
 		resourcesCPU := 500
 		resourcesMemory := 256
+		resoucesCount := 1
 
 		config := map[string]interface{}{
 			"image":        request.Image,
@@ -52,7 +54,7 @@ func MakeDeploy(client nomad.Job) http.HandlerFunc {
 			TaskGroups: []*api.TaskGroup{
 				&api.TaskGroup{
 					Name:  &jobName,
-					Count: 1,
+					Count: &resourceCount,
 					Tasks: []*api.Task{
 						&api.Task{
 							Name:   request.Service,
