@@ -32,7 +32,7 @@ func main() {
 		DeleteFunction: handlers.MakeNull("DeleteFunction"),
 		FunctionProxy:  handlers.MakeNull("FunctionProxy"),
 		ListNamespaces: handlers.MakeNull("ListNamespaces"),
-		UpdateFunction: handlers.MakeNull("UpdateFunction"),
+		UpdateFunction: handlers.MakeReader(client.Allocations()),
 		FunctionStatus: handlers.MakeReader(client.Allocations()),
 		ScaleFunction:  handlers.MakeNull("ScaleFunction"),
 		Secrets:        handlers.MakeNull("Secrets"),
