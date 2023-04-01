@@ -22,7 +22,7 @@ job "faas-nomadd" {
       }
 
       config {
-        image = "spiksius/faas-nomad:v0.0.1"
+        image = "ghcr.io/blinkinlight/faas-nomad:main"
         port_map {
           http = 8080
         }

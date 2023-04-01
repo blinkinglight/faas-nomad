@@ -15,6 +15,7 @@ func main() {
 	address := os.Getenv("NOMAD_ADDR")
 
 	c := api.DefaultConfig()
+	c.SecretID = os.Getenv("NOMAD_TOKEN")
 
 	client, err := api.NewClient(c.ClientConfig(region, address, false))
 	if err != nil {
