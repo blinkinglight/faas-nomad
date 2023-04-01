@@ -27,7 +27,7 @@ func main() {
 	}
 
 	handlers := &types.FaaSHandlers{
-		FunctionLister: handlers.MakeReader("FunctionLister", client.Allocations()),
+		FunctionLister: handlers.MakeLister("FunctionLister", client.Allocations()),
 		DeployFunction: handlers.MakeDeploy("DeployFunction", client.Jobs()),
 		DeleteFunction: handlers.MakeNull("DeleteFunction"),
 		FunctionProxy:  handlers.MakeProxy("FunctionProxy"),
