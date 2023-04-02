@@ -15,7 +15,7 @@ func MakeProxy(n string) http.HandlerFunc {
 
 		realFunction := fmt.Sprintf("http://%s-function.service.consul:8080", r.URL.Path[10:])
 		log.Printf("%s", realFunction)
-		req, _ := http.NewRequest("GET", realFunction, nil)
+		req, _ := http.NewRequest("GET", realFunction, r.Body)
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
